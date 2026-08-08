@@ -8,9 +8,14 @@ import { ProgressDashboard } from "@/components/progress/ProgressDashboard";
 import { recordAttempt, type ProgressMap } from "@/lib/progress";
 
 const allSubtopics = sampleDocument.topics.flatMap((t) => t.subtopics);
+const firstSubtopic = allSubtopics[0];
+
+if (!firstSubtopic) {
+  throw new Error("Sample document has no subtopics — check fixtures/sample-document.ts");
+}
 
 export default function DemoPage() {
-  const [activeId, setActiveId] = useState(allSubtopics[0].id);
+  const [activeId, setActiveId] = useState(firstSubtopic.id);
   const [view, setView] = useState<"study" | "progress">("study");
   const [progress, setProgress] = useState<ProgressMap>({});
 
