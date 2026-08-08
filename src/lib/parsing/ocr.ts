@@ -7,10 +7,10 @@ export async function ocrPageImages(pageImages: Buffer[]): Promise<ParsedDocumen
   const pages: ParsedDocument["pages"] = [];
 
   try {
-    for (let i = 0; i < pageImages.length; i++) {
+    for (const [i, pageImage] of pageImages.entries()) {
       const {
         data: { text },
-      } = await worker.recognize(pageImages[i]);
+      } = await worker.recognize(pageImage);
       pages.push({ pageNumber: i + 1, text: text.trim() });
     }
   } catch (err) {

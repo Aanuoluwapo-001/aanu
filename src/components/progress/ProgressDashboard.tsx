@@ -1,5 +1,5 @@
 import type { Topic } from "@/fixtures/sample-document";
-import { statusFor, type ProgressMap, type SubtopicStatus } from "@/lib/progress";
+import { statusFor, type ProgressMap, type SubtopicProgress, type SubtopicStatus } from "@/lib/progress";
 
 const STATUS_STYLES: Record<SubtopicStatus, { label: string; classes: string }> = {
   not_started: { label: "Not started", classes: "bg-zinc-700 text-zinc-300" },
@@ -26,10 +26,14 @@ export function ProgressDashboard({ topics, progress, onSelectSubtopic }: Progre
   );
 
   const weakest = allSubtopics
-    .filter((s) => progress[s.id] && progress[s.id].attempts > 0)
+    .map((s) => ({ subtopic: s, entry: progress[s.id] }))
+    .filter(
+      (pair): pair is { subtopic: (typeof allSubtopics)[number]; entry: SubtopicProgress } =>
+        !!pair.entry && pair.entry.attempts > 0
+    )
     .sort((a, b) => {
-      const ratioA = progress[a.id].bestScore / progress[a.id].totalQuestions;
-      const ratioB = progress[b.id].bestScore / progress[b.id].totalQuestions;
+      const ratioA = a.entry.bestScore / a.entry.totalQuestions;
+      const ratioB = b.entry.bestScore / b.entry.totalQuestions;
       return ratioA - ratioB;
     })
     .slice(0, 3);
@@ -48,26 +52,23 @@ export function ProgressDashboard({ topics, progress, onSelectSubtopic }: Progre
             Weakest subtopics
           </h3>
           <ul className="flex flex-col gap-2">
-            {weakest.map((s) => {
-              const p = progress[s.id];
-              return (
-                <li key={s.id}>
-                  <button
-                    type="button"
-                    onClick={() => onSelectSubtopic(s.id)}
-                    className="flex w-full items-center justify-between rounded-lg bg-aanu-surface p-3 text-left hover:ring-1 hover:ring-aanu-accent"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-zinc-100">{s.title}</p>
-                      <p className="text-xs text-zinc-500">{s.topicTitle}</p>
-                    </div>
-                    <span className="text-sm text-zinc-300">
-                      {p.bestScore}/{p.totalQuestions}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
+            {weakest.map(({ subtopic: s, entry }) => (
+              <li key={s.id}>
+                <button
+                  type="button"
+                  onClick={() => onSelectSubtopic(s.id)}
+                  className="flex w-full items-center justify-between rounded-lg bg-aanu-surface p-3 text-left hover:ring-1 hover:ring-aanu-accent"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-zinc-100">{s.title}</p>
+                    <p className="text-xs text-zinc-500">{s.topicTitle}</p>
+                  </div>
+                  <span className="text-sm text-zinc-300">
+                    {entry.bestScore}/{entry.totalQuestions}
+                  </span>
+                </button>
+              </li>
+            ))}
           </ul>
         </section>
       )}
