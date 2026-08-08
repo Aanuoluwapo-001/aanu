@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { Subtopic } from "@/fixtures/sample-document";
 import { sampleDocument } from "@/fixtures/sample-document";
 import { TopicNav } from "@/components/reteach/TopicNav";
 import { SubtopicView } from "@/components/reteach/SubtopicView";
@@ -8,11 +9,16 @@ import { ProgressDashboard } from "@/components/progress/ProgressDashboard";
 import { recordAttempt, type ProgressMap } from "@/lib/progress";
 
 const allSubtopics = sampleDocument.topics.flatMap((t) => t.subtopics);
-const firstSubtopic = allSubtopics[0];
 
-if (!firstSubtopic) {
+if (allSubtopics.length === 0) {
   throw new Error("Sample document has no subtopics — check fixtures/sample-document.ts");
 }
+
+// Explicitly typed and asserted non-null here, once, right after the length
+// check above proves it — TypeScript's control-flow narrowing doesn't carry
+// across into the component function below, so we assert it at the source
+// instead of re-deriving it (and re-triggering the same warning) inside.
+const firstSubtopic: Subtopic = allSubtopics[0]!;
 
 export default function DemoPage() {
   const [activeId, setActiveId] = useState(firstSubtopic.id);
