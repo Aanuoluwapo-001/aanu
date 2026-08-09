@@ -3,26 +3,24 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { uploadDocument, detectFileType } from "@/lib/data/documents";
-
-const MAX_FILE_SIZE_MB = 20;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+import { uploadDocument, MAX_FILE_SIZE_MB, MAX_FILE_SIZE_BYTES } from "@/lib/data/documents";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/** Validates a file client-side before ever touching the network. */
+/**
+ * Client-side validation before ever touching the network. Per the "accept
+ * any file type" requirement, this no longer rejects by MIME type or
+ * extension — only an empty file or one over the size ceiling is blocked.
+ */
 function validateFile(file: File): string | null {
-  if (!detectFileType(file.name)) {
-    return `"${file.name}" isn't a supported file type. Use PDF, DOCX, TXT, or an image (PNG/JPG/WEBP).`;
-  }
   if (file.size === 0) {
     return `"${file.name}" appears to be empty.`;
   }
   if (file.size > MAX_FILE_SIZE_BYTES) {
-    return `"${file.name}" is ${formatBytes(file.size)}, which is over the ${MAX_FILE_SIZE_MB}MB limit. Try a smaller file or split it up.`;
+    return `"${file.name}" is ${formatBytes(file.size)}, which is over the ${MAX_FILE_SIZE_MB}MB limit.`;
   }
   return null;
 }
@@ -95,9 +93,9 @@ export default function UploadPage() {
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
       <h1 className="text-2xl font-bold text-aanu-accent">Upload a document</h1>
       <p className="max-w-md text-center text-sm text-zinc-400">
-        PDF, DOCX, TXT, or an image of a handout, up to {MAX_FILE_SIZE_MB}MB. Aanu
-        will re-teach it back to you in plain language, topic by topic, with a
-        quiz after each part.
+        Any file type, up to {MAX_FILE_SIZE_MB}MB — documents, images, scanned
+        handouts. Aanu will re-teach it back to you in plain language, topic
+        by topic, with a quiz after each part.
       </p>
 
       <div
@@ -132,10 +130,10 @@ export default function UploadPage() {
         ) : (
           <p className="text-zinc-300">Drag a file here, or click to browse</p>
         )}
+        {/* No `accept` restriction — any file type is allowed per the upload spec. */}
         <input
           ref={inputRef}
           type="file"
-          accept=".pdf,.docx,.txt,.png,.jpg,.jpeg,.webp"
           onChange={onFileChange}
           disabled={status === "uploading"}
           className="hidden"

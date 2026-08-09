@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { listDocuments } from "@/lib/data/documents";
+import { DeleteDocumentButton } from "@/components/library/DeleteDocumentButton";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Waiting to process",
@@ -78,9 +79,16 @@ export default async function LibraryPage() {
                   {new Date(doc.uploaded_at).toLocaleString()}
                 </p>
               </div>
-              <span className="text-sm text-aanu-accent">
-                {STATUS_LABELS[doc.processing_status] ?? doc.processing_status}
-              </span>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-aanu-accent">
+                  {STATUS_LABELS[doc.processing_status] ?? doc.processing_status}
+                </span>
+                <DeleteDocumentButton
+                  documentId={doc.id}
+                  storagePath={doc.storage_path}
+                  filename={doc.original_filename}
+                />
+              </div>
             </li>
           ))}
         </ul>

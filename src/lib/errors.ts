@@ -23,6 +23,10 @@ export const Errors = {
     new AppError("EMPTY_EXTRACTED_TEXT", "No readable text was found in this file.", 422),
   aiInvalidJson: (attempt: number) =>
     new AppError("AI_INVALID_JSON", `Model returned malformed JSON (attempt ${attempt}).`, 502),
+  aiRequestFailed: (detail: string) =>
+    new AppError("AI_REQUEST_FAILED", `The AI request failed: ${detail}. Please try again.`, 502),
+  fileTooLarge: (maxMb: number) =>
+    new AppError("FILE_TOO_LARGE", `File exceeds the ${maxMb}MB limit.`, 413),
   notFound: (resource: string) => new AppError("NOT_FOUND", `${resource} not found.`, 404),
   forbidden: () => new AppError("FORBIDDEN", "You do not have access to this resource.", 403),
 };

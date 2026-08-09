@@ -26,7 +26,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/library");
+    router.push("/home");
     router.refresh();
   }
 

@@ -33,7 +33,8 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isDashboardRoute = request.nextUrl.pathname.startsWith("/library") ||
+  const isDashboardRoute = request.nextUrl.pathname.startsWith("/home") ||
+    request.nextUrl.pathname.startsWith("/library") ||
     request.nextUrl.pathname.startsWith("/documents") ||
     request.nextUrl.pathname.startsWith("/upload");
 

@@ -36,6 +36,7 @@ export default function LandingPage() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,rgba(94,234,212,0.15),transparent_60%)]"
         />
+        <p className="mb-2 text-lg font-medium text-zinc-400">Welcome to Aanu</p>
         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-aanu-accent">
           For students who want to actually understand it
         </p>

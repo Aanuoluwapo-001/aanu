@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Menu,
   X,
+  Home,
   Library,
   Upload,
   Sparkles,
@@ -14,8 +15,10 @@ import {
   Mail,
 } from "lucide-react";
 import { socialLinks } from "@/config/social";
+import { LogoutButton } from "@/components/layout/LogoutButton";
 
 const NAV_LINKS = [
+  { href: "/home", label: "Home", icon: Home },
   { href: "/library", label: "Your documents", icon: Library },
   { href: "/upload", label: "Upload", icon: Upload },
   { href: "/demo", label: "Sample document", icon: Sparkles },
@@ -68,7 +71,7 @@ export function Sidebar() {
       >
         <div>
           <div className="mb-8 flex items-center justify-between">
-            <a href="/library" className="text-lg font-bold text-aanu-accent">
+            <a href="/home" className="text-lg font-bold text-aanu-accent">
               Aanu
             </a>
             <button
@@ -99,28 +102,34 @@ export function Sidebar() {
           </nav>
         </div>
 
-        {SOCIAL_ITEMS.length > 0 && (
+        <div>
+          {SOCIAL_ITEMS.length > 0 && (
+            <div className="border-t border-zinc-700 pt-4">
+              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                Contact / follow
+              </p>
+              <ul className="flex flex-col gap-1">
+                {SOCIAL_ITEMS.map(({ key, href, label, icon: Icon }) => (
+                  <li key={key}>
+                    <a
+                      href={href!}
+                      target={key === "email" ? undefined : "_blank"}
+                      rel={key === "email" ? undefined : "noopener noreferrer"}
+                      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-zinc-400 hover:bg-aanu-bg hover:text-aanu-accent"
+                    >
+                      <Icon size={18} aria-hidden="true" />
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="border-t border-zinc-700 pt-4">
-            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Contact / follow
-            </p>
-            <ul className="flex flex-col gap-1">
-              {SOCIAL_ITEMS.map(({ key, href, label, icon: Icon }) => (
-                <li key={key}>
-                  <a
-                    href={href!}
-                    target={key === "email" ? undefined : "_blank"}
-                    rel={key === "email" ? undefined : "noopener noreferrer"}
-                    className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-zinc-400 hover:bg-aanu-bg hover:text-aanu-accent"
-                  >
-                    <Icon size={18} aria-hidden="true" />
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <LogoutButton />
           </div>
-        )}
+        </div>
       </aside>
     </>
   );
